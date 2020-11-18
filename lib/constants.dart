@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+const kRouteWelcome = "welcome";
+const kRouteChat = "chat";
+const kRouteLogin = "login";
+const kRouteRegistration = "registration";
+
+const kTagLightningLogo = "tagLightningLogo";
+
 const kSendButtonTextStyle = TextStyle(
   color: Colors.lightBlueAccent,
   fontWeight: FontWeight.bold,
