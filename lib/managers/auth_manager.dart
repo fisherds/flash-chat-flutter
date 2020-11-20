@@ -10,9 +10,9 @@ class AuthManager {
     return _instance;
   }
 
-  Future<UserCredential> createUser(email, password) {
+  Future<UserCredential> createUser(email, password) async {
     try {
-      return _auth.createUserWithEmailAndPassword(
+      return await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -22,9 +22,9 @@ class AuthManager {
     }
   }
 
-  Future<UserCredential> logInExistingUser(email, password) {
+  Future<UserCredential> logInExistingUser(email, password) async {
     try {
-      return _auth.signInWithEmailAndPassword(
+      return await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
