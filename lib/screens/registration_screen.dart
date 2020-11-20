@@ -1,5 +1,6 @@
 import 'package:flash_chat/components/padded_button.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/managers/auth_manager.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -8,6 +9,9 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  String email;
+  String password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +33,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               height: 48.0,
             ),
             TextField(
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.emailAddress,
               onChanged: (value) {
                 //Do something with the user input.
+                email = value;
               },
               decoration: kTextFieldEmailDecoration,
             ),
@@ -38,8 +45,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               height: 8.0,
             ),
             TextField(
+              obscureText: true,
+              textAlign: TextAlign.center,
               onChanged: (value) {
                 //Do something with the user input.
+                password = value;
               },
               decoration: kTextFieldPasswordDecoration,
             ),
@@ -48,8 +58,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             PaddedButton(
               text: "Register",
-              onPressedAction: null,
-            )
+              onPressedAction: () async {
+                print("Register $email $password");
+                final newUser = await AuthManager().createUser(email, password);
+                if (newUser != null) {
+                  Navigator.pushNamed(context, kRouteChat);
+                }
+              },
+            ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flash_chat/components/padded_button.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       // print(controller.value);
       // print(animation.value);
     });
+
+    Firebase.initializeApp();
   }
 
   @override
