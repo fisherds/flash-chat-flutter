@@ -18,7 +18,6 @@ class FlashChatState extends State {
   // Set default `_initialized` and `_error` state to false
   bool _initialized = false;
   bool _error = false;
-  int builderCounter = 0;
 
   // Define an async function to initialize FlutterFire
   void initializeFlutterFire() async {
@@ -44,31 +43,7 @@ class FlashChatState extends State {
 
   @override
   Widget build(BuildContext context) {
-    builderCounter++;
-    print("Called build $builderCounter");
-    if (_error) {
-      print("Error with Firebase init.  Something went wrong");
-    }
-    if (!_initialized) {
-      print("Firebase init is NOT done");
-      //AuthManager().beginListening();
-    }
-
-    if (!_error && _initialized) {
-      AuthManager().beginListening();
-    }
-
-    // Once complete, show your application
-    // if (snapshot.connectionState == ConnectionState.done) {
-    //   print("ConnectionState.Done with Firebase init");
-    return MaterialApp(
-      // theme: ThemeData.dark().copyWith(
-      //   textTheme: TextTheme(
-      //     bodyText1: TextStyle(color: Colors.black54),
-      //   ),
-      // ),
-      //theme: ThemeData.light(),
-      // home: WelcomeScreen(),
+    var materialApp = MaterialApp(
       routes: {
         kRouteWelcome: (context) => WelcomeScreen(),
         kRouteChat: (context) => ChatScreen(),
@@ -77,5 +52,15 @@ class FlashChatState extends State {
       },
       initialRoute: kRouteWelcome,
     );
+    if (_error) {
+      print("Error with Firebase init.  Something went wrong");
+      return materialApp;
+    }
+    if (!_initialized) {
+      print("Firebase init is NOT done");
+      return materialApp;
+    }
+    AuthManager().beginListening();
+    return materialApp;
   }
 }

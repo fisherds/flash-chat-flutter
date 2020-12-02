@@ -1,3 +1,4 @@
+import 'package:flash_chat/managers/auth_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 
@@ -17,6 +18,7 @@ class _ChatScreenState extends State<ChatScreen> {
               icon: Icon(Icons.close),
               onPressed: () {
                 //Implement logout functionality
+                AuthManager().signOut();
               }),
         ],
         title: Text('⚡️Chat'),

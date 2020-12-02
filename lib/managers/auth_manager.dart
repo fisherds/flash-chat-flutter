@@ -1,4 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import '../constants.dart';
 
 class AuthManager {
   FirebaseAuth _auth;
@@ -15,14 +18,14 @@ class AuthManager {
   beginListening() {
     _auth = FirebaseAuth.instance;
     FirebaseAuth.instance.authStateChanges().listen((User user) {
+      bool shouldCallCallback = _user != user;
       _user = user;
       if (user == null) {
         print('User is currently signed out!');
       } else {
         print('User is signed in!');
       }
-
-      if (_callbackFcn != null) {
+      if (_callbackFcn != null && shouldCallCallback) {
         _callbackFcn();
       }
     });
@@ -34,6 +37,32 @@ class AuthManager {
 
   void stopListening() {
     _callbackFcn = null;
+  }
+
+  void listenForRedirects(context) {
+    print("listenForRedirects called");
+    AuthManager().setListener(() {
+      print("Auth state change");
+      var routeName = ModalRoute.of(context)?.settings?.name;
+
+      print("Route: $routeName");
+
+      bool isOnANoUserScreen = routeName == null ||
+          routeName == kRouteWelcome ||
+          routeName == kRouteLogin ||
+          routeName == kRouteRegistration;
+      // Welcome||login||reg||null && signedIn --> go to chat
+      // !(Welcome||login||reg||null) && !signedIn --> go to welcome
+
+      if (AuthManager().isSignedIn && isOnANoUserScreen) {
+        print("Signed in so go to the chat screen");
+        Navigator.pushNamed(context, kRouteChat);
+      }
+      if (!AuthManager().isSignedIn && !isOnANoUserScreen) {
+        print("Not Signed in so go back to the welcome screen");
+        Navigator.pushNamed(context, kRouteWelcome);
+      }
+    });
   }
 
   Future<UserCredential> createUser(email, password) async {
@@ -60,9 +89,13 @@ class AuthManager {
     }
   }
 
-  String get uid => _user.uid ?? "";
+  void signOut() {
+    _auth.signOut();
+  }
 
-  String get email => _user.email ?? "";
+  String get uid => _user?.uid ?? "";
+
+  String get email => _user?.email ?? "";
 
   bool get isSignedIn => _user != null;
 }

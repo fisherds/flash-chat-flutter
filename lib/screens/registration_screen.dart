@@ -60,10 +60,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               text: "Register",
               onPressedAction: () async {
                 print("Register $email $password");
-                final newUser = await AuthManager().createUser(email, password);
-                if (newUser != null) {
-                  Navigator.pushNamed(context, kRouteChat);
-                }
+                // final newUser = await AuthManager().createUser(email, password);
+                // if (newUser != null) {
+                //   Navigator.pushNamed(context, kRouteChat);
+                // }
+                AuthManager().createUser(email, password);
               },
             ),
           ],

@@ -41,29 +41,24 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     controller.forward();
     controller.addListener(() {
       setState(() {});
-      // print(controller.value);
-      // print(animation.value);
     });
 
+    // listenForRedirects();
+    AuthManager().listenForRedirects(context);
+  }
+
+  void listenForRedirects() {
+    AuthManager().setListener(() {
+      checkForRedirect();
+    });
     checkForRedirect();
   }
 
   void checkForRedirect() {
-    print("checkForRedirect");
     if (AuthManager().isSignedIn) {
-      print("Redirect without a listener");
+      AuthManager().stopListening();
       Navigator.pushNamed(context, kRouteChat);
-      return;
     }
-    AuthManager().setListener(() {
-      print("Auth Callback called in welcome screen");
-      if (AuthManager().isSignedIn) {
-        print("Redirect with a listener");
-        AuthManager().stopListening();
-        Navigator.pushNamed(context, kRouteChat);
-        return;
-      }
-    });
   }
 
   @override

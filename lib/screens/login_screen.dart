@@ -62,11 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressedAction: () async {
                 print("Log in $email $password");
 
-                final existingUser =
-                    await AuthManager().logInExistingUser(email, password);
-                if (existingUser != null) {
-                  Navigator.pushNamed(context, kRouteChat);
-                }
+                // final existingUser =
+                //     await AuthManager().logInExistingUser(email, password);
+                // if (existingUser != null) {
+                //   Navigator.pushNamed(context, kRouteChat);
+                // }
+                AuthManager().logInExistingUser(email, password);
               },
             )
           ],
