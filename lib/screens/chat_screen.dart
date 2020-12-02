@@ -9,6 +9,12 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   @override
+  void initState() {
+    print("Email ${AuthManager().email}");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -19,6 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
               onPressed: () {
                 //Implement logout functionality
                 AuthManager().signOut();
+                Navigator.pop(context);
               }),
         ],
         title: Text('⚡️Chat'),

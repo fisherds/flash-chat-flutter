@@ -43,8 +43,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       setState(() {});
     });
 
-    // listenForRedirects();
-    AuthManager().listenForRedirects(context);
+    listenForRedirects();
   }
 
   void listenForRedirects() {
