@@ -47,6 +47,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   }
 
   void listenForRedirects() {
+    print("Listen for redirects");
     AuthManager().setListener(() {
       checkForRedirect();
     });
@@ -56,6 +57,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   void checkForRedirect() {
     if (AuthManager().isSignedIn) {
       AuthManager().stopListening();
+      print("redirecting form welcome");
       Navigator.pushNamed(context, kRouteChat);
     }
   }
@@ -101,6 +103,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               PaddedButton(
                 text: "Log In",
                 onPressedAction: () {
+                  AuthManager().stopListening();
                   Navigator.pushNamed(context, kRouteLogin);
                 },
                 color: Colors.lightBlueAccent,
@@ -108,6 +111,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               PaddedButton(
                   text: "Register",
                   onPressedAction: () {
+                    AuthManager().stopListening();
                     Navigator.pushNamed(context, kRouteRegistration);
                   },
                   color: Colors.blueAccent),

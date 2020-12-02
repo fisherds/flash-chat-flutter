@@ -74,7 +74,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Navigator.pushNamed(context, kRouteChat);
                   }
                   setState(() {
-                    showSpinner = true;
+                    showSpinner = false;
                   });
                 },
               ),
