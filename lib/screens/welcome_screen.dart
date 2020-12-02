@@ -1,7 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flash_chat/components/padded_button.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/managers/auth_manager.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -45,7 +45,25 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       // print(animation.value);
     });
 
-    Firebase.initializeApp();
+    checkForRedirect();
+  }
+
+  void checkForRedirect() {
+    print("checkForRedirect");
+    if (AuthManager().isSignedIn) {
+      print("Redirect without a listener");
+      Navigator.pushNamed(context, kRouteChat);
+      return;
+    }
+    AuthManager().setListener(() {
+      print("Auth Callback called in welcome screen");
+      if (AuthManager().isSignedIn) {
+        print("Redirect with a listener");
+        AuthManager().stopListening();
+        Navigator.pushNamed(context, kRouteChat);
+        return;
+      }
+    });
   }
 
   @override
