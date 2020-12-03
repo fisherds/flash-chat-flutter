@@ -23,7 +23,7 @@ class _ChatScreenState extends State<ChatScreen> {
       print("Recieved ${MessagesManager().length} messages");
 
       if (MessagesManager().length > 0) {
-        print(MessagesManager().getMessageAtIndex(0));
+        print(MessagesManager().getMessageAt(0));
       }
     });
 

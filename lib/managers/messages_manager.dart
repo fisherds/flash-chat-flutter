@@ -22,13 +22,15 @@ class MessagesManager {
     _callbackFcn = callbackFcn;
     _ref
         .orderBy(kFbMessageCreated, descending: true)
+        .limit(50)
         .snapshots()
         .listen((QuerySnapshot querySnapshot) {
       _docs = querySnapshot.docs; // Save the data
       // Print the documents
-      querySnapshot.docs.forEach((doc) {
-        print(doc.data());
-      });
+      // querySnapshot.docs.forEach((doc) {
+      //   print(doc.data());
+      // });
+      // Another way to print:
       // for (DocumentSnapshot doc in querySnapshot.docs) {
       //   print(doc.data());
       // }
@@ -40,11 +42,13 @@ class MessagesManager {
 
   int get length => _docs.length;
 
-  Message getMessageAtIndex(int index) {
-    DocumentSnapshot doc = _docs[index];
-    return Message(
-        text: doc.get(kFbMessageText), senderUid: doc.get(kFbMessageSenderUid));
-  }
+  // Message getMessageAtIndex(int index) {
+  // DocumentSnapshot doc = _docs[index];
+  // return Message(
+  //     text: doc.get(kFbMessageText), senderUid: doc.get(kFbMessageSenderUid));
+  // }
+
+  Message getMessageAt(int index) => Message(_docs[index]);
 
   stopListening() {
     _callbackFcn = null;
