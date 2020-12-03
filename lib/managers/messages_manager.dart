@@ -42,6 +42,8 @@ class MessagesManager {
 
   int get length => _docs.length;
 
+  Stream get stream => _ref.snapshots();
+
   // Message getMessageAtIndex(int index) {
   // DocumentSnapshot doc = _docs[index];
   // return Message(

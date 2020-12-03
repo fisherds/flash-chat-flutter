@@ -1,5 +1,6 @@
 import 'package:flash_chat/managers/auth_manager.dart';
 import 'package:flash_chat/managers/messages_manager.dart';
+import 'package:flash_chat/model_objects/Message.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,7 +11,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  CollectionReference _messagesCollectionRef;
+  final messageTextController = TextEditingController();
   String messageBeingTyped = "";
 
   @override
@@ -52,6 +53,41 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+              stream: MessagesManager().stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.lightBlueAccent,
+                      ),
+                    ),
+                  );
+                }
+
+                final docs = snapshot.data.docs;
+                // List<Text> messageWidgets = [];
+                // for (var doc in docs) {
+                //   final message = Message(doc);
+                //   final messageWidget = Text(message.toString());
+                //   messageWidgets.add(messageWidget);
+                // }
+                // return Column(
+                //   children: messageWidgets,
+                // );
+
+                return Expanded(
+                  child: ListView(
+                      children: docs.map((DocumentSnapshot doc) {
+                    return MessageBubble(Message(doc));
+                  }).toList()),
+                );
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -59,6 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: messageTextController,
                       onChanged: (value) {
                         //Do something with the user input.
                         messageBeingTyped = value;
@@ -69,6 +106,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   FlatButton(
                     onPressed: () {
+                      messageTextController.clear();
                       MessagesManager()
                           .addMessage(messageBeingTyped, AuthManager().uid);
                     },
@@ -82,6 +120,42 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MessageBubble extends StatelessWidget {
+  final Message message;
+  MessageBubble(this.message);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            message.senderUid,
+            style: TextStyle(
+              fontSize: 12.0,
+              color: Colors.black54,
+            ),
+          ),
+          Material(
+            elevation: 5.0,
+            borderRadius: BorderRadius.circular(20.0),
+            color: Colors.lightBlueAccent,
+            child: ListTile(
+              title: Text(
+                message.text,
+                style: TextStyle(fontSize: 24.0),
+              ),
+              // subtitle: Text(message.senderUid),
+            ),
+          ),
+        ],
       ),
     );
   }
