@@ -20,12 +20,18 @@ class MessagesManager {
 
   beginListening(Function callbackFcn) {
     _callbackFcn = callbackFcn;
-    _ref.snapshots().listen((querySnapshot) {
+    _ref
+        .orderBy(kFbMessageCreated, descending: true)
+        .snapshots()
+        .listen((QuerySnapshot querySnapshot) {
       _docs = querySnapshot.docs; // Save the data
       // Print the documents
-      for (DocumentSnapshot doc in querySnapshot.docs) {
+      querySnapshot.docs.forEach((doc) {
         print(doc.data());
-      }
+      });
+      // for (DocumentSnapshot doc in querySnapshot.docs) {
+      //   print(doc.data());
+      // }
       if (_callbackFcn != null) {
         _callbackFcn();
       }
@@ -49,6 +55,7 @@ class MessagesManager {
         .add({
           kFbMessageText: message,
           kFbMessageSenderUid: uid,
+          kFbMessageCreated: FieldValue.serverTimestamp(),
         })
         .then((value) => print("Message Added"))
         .catchError((error) => print("Failed to add message: $error"));

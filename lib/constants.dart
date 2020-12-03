@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const kFbMessagesCollectionPath = "Messages";
 const kFbMessageText = "text";
 const kFbMessageSenderUid = "senderUid";
+const kFbMessageCreated = "created";
 
 const kRouteWelcome = "welcome";
 const kRouteChat = "chat";
