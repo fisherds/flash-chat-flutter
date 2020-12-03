@@ -1,6 +1,8 @@
 import 'package:flash_chat/managers/auth_manager.dart';
+import 'package:flash_chat/managers/messages_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -8,9 +10,23 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  CollectionReference _messagesCollectionRef;
+  String messageBeingTyped = "";
+
   @override
   void initState() {
     print("Email ${AuthManager().email}");
+
+    MessagesManager().beginListening(() {
+      print("called the callback");
+
+      print("Recieved ${MessagesManager().length} messages");
+
+      if (MessagesManager().length > 0) {
+        print(MessagesManager().getMessageAtIndex(0));
+      }
+    });
+
     super.initState();
   }
 
@@ -45,13 +61,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       onChanged: (value) {
                         //Do something with the user input.
+                        messageBeingTyped = value;
+                        // print(messageBeingTyped);
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   FlatButton(
                     onPressed: () {
-                      //Implement send functionality.
+                      MessagesManager()
+                          .addMessage(messageBeingTyped, AuthManager().uid);
                     },
                     child: Text(
                       'Send',
