@@ -7,7 +7,7 @@ class MessagesManager {
   CollectionReference _ref;
   bool _waiting = true;
   bool _hasError = false;
-  var docs = List<DocumentSnapshot>();
+  var _docs = List<DocumentSnapshot>();
 
   // Boilerplate code that make a singleton (don't delete)
   static final MessagesManager _instance =
@@ -23,7 +23,7 @@ class MessagesManager {
   onData(QuerySnapshot querySnapshot) {
     _waiting = false;
     _hasError = false;
-    docs = querySnapshot.docs; // Save the data
+    _docs = querySnapshot.docs; // Save the data
     // Print the documents
     // querySnapshot.docs.forEach((doc) {
     //   print(doc.data());
@@ -52,9 +52,11 @@ class MessagesManager {
         .listen(onData, onError: onError);
   }
 
-  int get length => docs.length;
+  int get length => _docs.length;
 
-  bool get isEmpty => docs.length == 0;
+  bool get isEmpty => _docs.length == 0;
+
+  List<DocumentSnapshot> get docs => _docs;
 
   bool get hasError => _hasError;
 
