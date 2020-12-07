@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flash_chat/managers/auth_manager.dart';
 import 'package:flash_chat/managers/messages_manager.dart';
 import 'package:flash_chat/model_objects/Message.dart';
@@ -12,6 +14,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final messageTextController = TextEditingController();
+  final scrollController = ScrollController();
   String messageBeingTyped = "";
 
   @override
@@ -20,14 +23,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
     MessagesManager().beginListening(() {
       print("called the callback");
-
       print("Recieved ${MessagesManager().length} messages");
-
       if (MessagesManager().length > 0) {
         print(MessagesManager().getMessageAt(0));
       }
+      setState(() {
+        //
+      });
     });
-
     super.initState();
   }
 
@@ -53,41 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            StreamBuilder<QuerySnapshot>(
-              stream: MessagesManager().stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Something went wrong');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.lightBlueAccent,
-                      ),
-                    ),
-                  );
-                }
-
-                final docs = snapshot.data.docs;
-                // List<Text> messageWidgets = [];
-                // for (var doc in docs) {
-                //   final message = Message(doc);
-                //   final messageWidget = Text(message.toString());
-                //   messageWidgets.add(messageWidget);
-                // }
-                // return Column(
-                //   children: messageWidgets,
-                // );
-
-                return Expanded(
-                  child: ListView(
-                      children: docs.map((DocumentSnapshot doc) {
-                    return MessageBubble(Message(doc));
-                  }).toList()),
-                );
-              },
-            ),
+            getMessageViews(),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -123,6 +92,69 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+  getMessageViews() {
+    if (MessagesManager().isWaiting) {
+      return Expanded(
+        child: Center(
+          child: CircularProgressIndicator(
+            backgroundColor: Colors.lightBlueAccent,
+          ),
+        ),
+      );
+    } else if (MessagesManager().hasError) {
+      return Expanded(
+        child: Center(child: Text('Something went wrong')),
+      );
+    } else if (MessagesManager().isEmpty) {
+      return Expanded(
+        child: Center(child: Text('No messages')),
+      );
+    } else {
+      Timer(Duration(microseconds: 0), () {
+        // scrollController.jumpTo(0);
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      });
+      return Expanded(
+        child: ListView(
+            controller: scrollController,
+            // reverse: true,
+            children: MessagesManager().docs.map((DocumentSnapshot doc) {
+              return MessageBubble(Message(doc));
+            }).toList()),
+      );
+    }
+  }
+
+  // StreamBuilder<QuerySnapshot>(
+  //   stream: MessagesManager().stream,
+  //   builder: (context, snapshot) {
+  //     if (snapshot.hasError) {
+  //       return Text('Something went wrong');
+  //     }
+  //     if (snapshot.connectionState == ConnectionState.waiting) {
+  //       return Expanded(
+  //         child: Center(
+  //           child: CircularProgressIndicator(
+  //             backgroundColor: Colors.lightBlueAccent,
+  //           ),
+  //         ),
+  //       );
+  //     }
+
+  //     final docs = snapshot.data.docs;
+  //     // List<Text> messageWidgets = [];
+  //     // for (var doc in docs) {
+  //     //   final message = Message(doc);
+  //     //   final messageWidget = Text(message.toString());
+  //     //   messageWidgets.add(messageWidget);
+  //     // }
+  //     // return Column(
+  //     //   children: messageWidgets,
+  //     // );
+
+  //   },
+  // )
 }
 
 class MessageBubble extends StatelessWidget {

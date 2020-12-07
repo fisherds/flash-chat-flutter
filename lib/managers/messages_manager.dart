@@ -5,7 +5,9 @@ import 'package:flash_chat/model_objects/Message.dart';
 class MessagesManager {
   Function _callbackFcn;
   CollectionReference _ref;
-  var _docs = List<DocumentSnapshot>();
+  bool _waiting = true;
+  bool _hasError = false;
+  var docs = List<DocumentSnapshot>();
 
   // Boilerplate code that make a singleton (don't delete)
   static final MessagesManager _instance =
@@ -18,29 +20,45 @@ class MessagesManager {
     return _instance;
   }
 
+  onData(QuerySnapshot querySnapshot) {
+    _waiting = false;
+    _hasError = false;
+    docs = querySnapshot.docs; // Save the data
+    // Print the documents
+    // querySnapshot.docs.forEach((doc) {
+    //   print(doc.data());
+    // });
+    // Another way to print:
+    // for (DocumentSnapshot doc in querySnapshot.docs) {
+    //   print(doc.data());
+    // }
+    if (_callbackFcn != null) {
+      _callbackFcn();
+    }
+  }
+
+  onError(error) {
+    print("There was an error $error");
+    _hasError = true;
+  }
+
   beginListening(Function callbackFcn) {
     _callbackFcn = callbackFcn;
     _ref
-        .orderBy(kFbMessageCreated, descending: true)
+        // .orderBy(kFbMessageCreated, descending: true)
+        .orderBy(kFbMessageCreated)
         .limit(50)
         .snapshots()
-        .listen((QuerySnapshot querySnapshot) {
-      _docs = querySnapshot.docs; // Save the data
-      // Print the documents
-      // querySnapshot.docs.forEach((doc) {
-      //   print(doc.data());
-      // });
-      // Another way to print:
-      // for (DocumentSnapshot doc in querySnapshot.docs) {
-      //   print(doc.data());
-      // }
-      if (_callbackFcn != null) {
-        _callbackFcn();
-      }
-    });
+        .listen(onData, onError: onError);
   }
 
-  int get length => _docs.length;
+  int get length => docs.length;
+
+  bool get isEmpty => docs.length == 0;
+
+  bool get hasError => _hasError;
+
+  bool get isWaiting => _waiting;
 
   Stream get stream => _ref.snapshots();
 
@@ -50,7 +68,7 @@ class MessagesManager {
   //     text: doc.get(kFbMessageText), senderUid: doc.get(kFbMessageSenderUid));
   // }
 
-  Message getMessageAt(int index) => Message(_docs[index]);
+  Message getMessageAt(int index) => Message(docs[index]);
 
   stopListening() {
     _callbackFcn = null;
