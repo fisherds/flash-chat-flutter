@@ -163,10 +163,13 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMine = message.senderUid == AuthManager().uid;
+
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
             message.senderUid,
@@ -177,15 +180,28 @@ class MessageBubble extends StatelessWidget {
           ),
           Material(
             elevation: 5.0,
-            borderRadius: BorderRadius.circular(20.0),
-            color: Colors.lightBlueAccent,
-            child: ListTile(
-              title: Text(
+            // borderRadius: BorderRadius.circular(8.0),
+            borderRadius: isMine ? kMyBorderRadius : kOthersBorderRadius,
+            color: isMine ? Colors.greenAccent : Colors.lightBlueAccent,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              child: Text(
                 message.text,
                 style: TextStyle(fontSize: 24.0),
+
+                // subtitle: Text(message.senderUid),
               ),
-              // subtitle: Text(message.senderUid),
             ),
+            // child: ListTile(
+            //   title: Text(
+            //     message.text,
+            //     style: TextStyle(fontSize: 24.0),
+            //   ),
+            //   // subtitle: Text(message.senderUid),
+            // ),
           ),
         ],
       ),

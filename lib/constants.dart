@@ -51,3 +51,17 @@ const kMessageContainerDecoration = BoxDecoration(
     top: BorderSide(color: Colors.lightBlueAccent, width: 2.0),
   ),
 );
+
+const kMessageBorderRadius = 10.0;
+
+const kMyBorderRadius = BorderRadius.only(
+  topLeft: Radius.circular(kMessageBorderRadius),
+  bottomLeft: Radius.circular(kMessageBorderRadius),
+  bottomRight: Radius.circular(kMessageBorderRadius),
+);
+
+const kOthersBorderRadius = BorderRadius.only(
+  topRight: Radius.circular(kMessageBorderRadius),
+  bottomLeft: Radius.circular(kMessageBorderRadius),
+  bottomRight: Radius.circular(kMessageBorderRadius),
+);
